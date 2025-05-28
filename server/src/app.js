@@ -2,9 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const morgan = require("morgan");
-
-const planetRouter = require("./routers/planets/planets.router");
-const launchesRouter = require("./routers/launches/launches.router");
+const api = require("./routers/api");
 const app = express();
 
 app.use(
@@ -19,9 +17,7 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-// API routes
-app.use("/planets", planetRouter);
-app.use("/launches", launchesRouter);
+app.use("/v1", api);
 
 // Catch-all for React frontend routes
 app.get("/{*any}", (req, res) => {
