@@ -1,6 +1,7 @@
 const { parse } = require("csv-parse");
 const fs = require("fs");
 const path = require("path"); // You are missing this import
+const planets = require("./planets.mongo");
 
 const isHabitablePlanet = (planet) => {
   return (
@@ -10,8 +11,6 @@ const isHabitablePlanet = (planet) => {
     planet["koi_prad"] < 1.6
   );
 };
-
-const habitablePlanet = [];
 
 function loadPlanetData() {
   return new Promise((resolve, reject) => {
@@ -24,12 +23,20 @@ function loadPlanetData() {
           columns: true,
         })
       )
-      .on("data", (chunk) => {
+      .on("data", async (chunk) => {
         if (isHabitablePlanet(chunk)) {
-          habitablePlanet.push(chunk);
+          savePlanet(chunk);
         }
       })
-      .on("end", () => {
+      .on("end", async () => {
+        const habitablePlanets = await planets.find(
+          {},
+          {
+            _id: 0,
+            __v: 0,
+          }
+        );
+        console.log(`${habitablePlanets.length} habitable planets found!`);
         resolve();
       })
       .on("error", (err) => {
@@ -39,8 +46,32 @@ function loadPlanetData() {
   });
 }
 
-function getAllPlanets(req, res) {
-  return habitablePlanet;
+async function getAllPlanets(req, res) {
+  return await planets.find(
+    {},
+    {
+      _id: 0,
+      __v: 0,
+    }
+  );
+}
+
+async function savePlanet(planet) {
+  try {
+    await planets.findOneAndUpdate(
+      {
+        keplerName: planet.kepler_name,
+      },
+      {
+        keplerName: planet.kepler_name,
+      },
+      {
+        upsert: true,
+      }
+    );
+  } catch (error) {
+    console.error(`Could not save planet ${planet.kepler_name}: ${error}`);
+  }
 }
 
 module.exports = { loadPlanetData, getAllPlanets };
