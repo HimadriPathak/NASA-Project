@@ -7,7 +7,7 @@ async function saveLaunch(launch) {
   if (!planet) {
     throw new Error("No planet found for this launch");
   }
-  launches.findOneAndUpdate(
+  await launches.findOneAndUpdate(
     {
       flightNumber: launch.flightNumber,
     },
@@ -17,7 +17,7 @@ async function saveLaunch(launch) {
 }
 
 async function getLatestFlightNumber() {
-  const latestLaunch = await launches.findeOne().sort("-flightNumber");
+  const latestLaunch = await launches.findOne().sort("-flightNumber");
   if (!latestLaunch) {
     return DEFAULT_FLIGHT_NUMBER;
   }
@@ -25,7 +25,7 @@ async function getLatestFlightNumber() {
 }
 
 async function existsLaunchWithId(launchId) {
-  return await launches.findeOne({ flightNumber: launchId });
+  return await launches.findOne({ flightNumber: launchId });
 }
 
 async function getAllLaunches() {
