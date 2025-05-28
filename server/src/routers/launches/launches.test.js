@@ -15,16 +15,16 @@ describe("Launches API", () => {
   afterAll(async () => {
     await disconnectFromMongoDB();
   });
-  // describe("Test GET /launches", () => {
-  //   test("it should respond with 200 success", async () => {
-  //     const response = await request(app)
-  //       .get("/launches")
-  //       .expect("Content-Type", /json/)
-  //       .expect(200);
+  describe("Test GET /launches", () => {
+    test("it should respond with 200 success", async () => {
+      const response = await request(app)
+        .get("/launches")
+        .expect("Content-Type", /json/)
+        .expect(200);
 
-  //     expect(response.statusCode).toBe(200);
-  //   });
-  // });
+      expect(response.statusCode).toBe(200);
+    });
+  });
 
   //SECTION - Node in-built test module
   // describe("Test POST /launch", () => {
@@ -90,7 +90,7 @@ describe("Launches API", () => {
       const response = await request(app)
         .post("/launches")
         .send(completeLaunchData)
-        // .expect("Content-Type", /json/)
+        .expect("Content-Type", /json/)
         .expect(201);
       const requestDate = new Date(completeLaunchData.launchDate).valueOf();
       const responseDate = new Date(response.body.launchDate).valueOf();
